@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 273 94% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 273 94% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 273 94% 13%;
+    --primary: 273 94% 13%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 261 74% 65%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 273 20% 95%;
+    --muted-foreground: 273 10% 40%;
+    --accent: 261 74% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 273 20% 90%;
+    --input: 273 20% 90%;
+    --ring: 273 94% 13%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border; /* This will apply the border to all elements */
+  }
+
+  body {
+    @apply bg-background text-foreground font-['Inter'];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Define bg-background using the --background variable */
+@layer components {
+  .bg-background {
+    background-color: hsl(var(--background)); /* Apply the custom background color */
+  }
+
+  .border-border {
+    border: 2px solid #000; /* Example of a custom border class */
+  }
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-sm border border-gray-200/50;
+}
+
+.btn-primary {
+  @apply px-4 py-2.5 bg-[#260446] hover:bg-[#7e61e9] text-white rounded-md transition-colors duration-200;
+}
+
+.glow-button {
+  @apply relative overflow-hidden rounded-md text-white font-medium transition-all duration-300 ease-in-out;
+  background: linear-gradient(90deg, #260446, #7e61e9);
+  box-shadow: 0 0 5px rgba(126, 97, 233, 0.3);
+}
+
+.glow-button::before {
+  @apply content-[''] absolute inset-0 opacity-0 transition-opacity duration-300;
+  background: linear-gradient(90deg, #7e61e9, #9b87f5);
+  z-index: -1;
+}
+
+.glow-button:hover {
+  @apply shadow-lg transform -translate-y-0.5;
+  box-shadow: 0 0 15px rgba(126, 97, 233, 0.7);
+}
+
+.glow-button.purple {
+  background: linear-gradient(90deg, #260446, #7e61e9);
+}
+
+.glow-button.pink {
+  background: linear-gradient(90deg, #7e0446, #e961bb);
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+.topic-dropdown {
+  @apply relative inline-block;
+}
+
+.dropdown-content {
+  @apply hidden absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white/90 backdrop-blur-sm border border-purple-100 py-1;
+}
+
+.topic-dropdown:hover .dropdown-content {
+  @apply block;
+}
+
+.dropdown-item {
+  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-colors;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
