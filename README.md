@@ -2,15 +2,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Virtual Lab - An Animated DSA Learning Platform**
+**Virtual Lab - An Animated Learning Platform**
 
-Explore Data Structures and Algorithms concepts with interactive visualizations and animations. Designed to make learning DSA engaging and effective, especially for placements.
+Explore Engineering concepts with interactive visualizations and animations. Designed  to make especially for learning DSA in engaging and effective way & especially for placements.
 
-**[View the Live Demo!]**
+## 🎬 Watch the Demo Video  
 
-![Virtual Labs Website Demo Image](./public/placeholder.svg) <!-- REPLACE THIS WITH YOUR ACTUAL IMAGE PATH OR URL -->
-
-<br />
+<video width="100%" controls>
+  <source src="https://github.com/Ramharsh-aidev/Felicity-Hackathon-Prototype/ShortDemo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## 🚀 Getting Started
 
