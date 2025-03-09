@@ -6,10 +6,13 @@
 
 Explore Engineering concepts with interactive visualizations and animations. Designed  to make especially for learning DSA in engaging and effective way & especially for placements.
 
-## 🎬 Watch the Demo Video  
+## 🎬 Watch the Short Demo Video  
 
-![Demo Preview](https://raw.githubusercontent.com/Ramharsh-aidev/Felicity-Hackathon-Prototype/main/ShortDemo.gif)
+<p align="center">
+  <img src="https://github.com/Ramharsh-aidev/Felicity-Hackathon-Prototype/blob/main/ShortDemo.gif" width="800" height="450" alt="Demo Preview">
+</p>
 
+#### (Scroll to Bottom for full Website Video)
 
 
 ## 🚀 Getting Started
