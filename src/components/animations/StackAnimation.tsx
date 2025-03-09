@@ -1,273 +1,419 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
-// Stack implementation
-class Stack<T> {
-  private items: T[];
-  
-  constructor() {
-    this.items = [];
+// Queue implementation
+class Queue<T> {
+  private items: T[] = [];
+
+  enqueue(item: T): void {
+    this.items.push(item);
   }
-  
-  push(element: T): void {
-    this.items.push(element);
+
+  dequeue(): T | undefined {
+    return this.items.shift();
   }
-  
-  pop(): T | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
-    return this.items.pop();
-  }
-  
+
   peek(): T | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
-    return this.items[this.items.length - 1];
+    return this.items[0];
   }
-  
+
   isEmpty(): boolean {
     return this.items.length === 0;
   }
-  
+
   size(): number {
     return this.items.length;
-  }
-  
-  getItems(): T[] {
-    return [...this.items];
-  }
-
-  // Search for a value and return true if found
-  search(value: T): boolean {
-    return this.items.includes(value);
-  }
-  
-  // Get the position of a value in the stack (from top)
-  searchPosition(value: T): number {
-    for (let i = this.items.length - 1; i >= 0; i--) {
-      if (this.items[i] === value) {
-        return this.items.length - 1 - i;
-      }
-    }
-    return -1;
   }
 
   clear(): void {
     this.items = [];
   }
+
+  toArray(): T[] {
+    return [...this.items];
+  }
+}
+
+// Stack implementation
+class Stack<T> {
+  private items: T[] = [];
+
+  push(item: T): void {
+    this.items.push(item);
+  }
+
+  pop(): T | undefined {
+    return this.items.pop();
+  }
+
+  peek(): T | undefined {
+    return this.items[this.items.length - 1];
+  }
+
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+
+  size(): number {
+    return this.items.length;
+  }
+
+  clear(): void {
+    this.items = [];
+  }
+
+  toArray(): T[] {
+    return [...this.items];
+  }
 }
 
 const StackAnimation: React.FC = () => {
-  const [stack] = useState<Stack<number>>(new Stack<number>());
+  const [stack] = useState<Stack<number>>(new Stack());
   const [stackItems, setStackItems] = useState<number[]>([]);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [searchResult, setSearchResult] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>('');
-  const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
-  
-  const inputRef = useRef<HTMLInputElement>(null);
-  
-  const updateStackItems = () => {
-    setStackItems([...stack.getItems()]);
+  const [stackValue, setStackValue] = useState<string>('');
+  const [stackMessage, setStackMessage] = useState<string>('');
+  const stackInputRef = useRef<HTMLInputElement>(null);
+
+  const [queue] = useState<Queue<number>>(new Queue());
+  const [queueItems, setQueueItems] = useState<number[]>([]);
+  const [queueValue, setQueueValue] = useState<string>('');
+  const [queueMessage, setQueueMessage] = useState<string>('');
+  const queueInputRef = useRef<HTMLInputElement>(null);
+
+  const [activeTab, setActiveTab] = useState<'stack' | 'queue'>('stack');
+
+  const updateVisualStack = () => {
+    setStackItems([...stack.toArray()]);
   };
-  
+
+  const updateVisualQueue = () => {
+    setQueueItems([...queue.toArray()]);
+  };
+
   const handlePush = () => {
-    if (!inputValue.trim()) {
-      setMessage('Please enter a value');
+    if (!stackValue.trim()) {
+      setStackMessage('Please enter a value');
       return;
     }
-    
-    const value = parseInt(inputValue);
+
+    const value = parseInt(stackValue);
     if (isNaN(value)) {
-      setMessage('Please enter a valid number');
+      setStackMessage('Please enter a valid number');
       return;
     }
-    
+
     stack.push(value);
-    updateStackItems();
-    setInputValue('');
-    setMessage(`Pushed ${value} onto the stack`);
-    inputRef.current?.focus();
+    updateVisualStack();
+    setStackValue('');
+    setStackMessage(`Pushed ${value} onto the stack`);
+    stackInputRef.current?.focus();
   };
-  
+
   const handlePop = () => {
     const popped = stack.pop();
     if (popped === undefined) {
-      setMessage('Stack is empty');
+      setStackMessage('Stack is empty');
     } else {
-      setMessage(`Popped ${popped} from the stack`);
+      setStackMessage(`Popped ${popped} from the stack`);
     }
-    updateStackItems();
+    updateVisualStack();
   };
-  
-  const handlePeek = () => {
-    const top = stack.peek();
-    if (top === undefined) {
-      setMessage('Stack is empty');
+
+  const handlePeekStack = () => {
+    const peeked = stack.peek();
+    if (peeked === undefined) {
+      setStackMessage('Stack is empty');
     } else {
-      setMessage(`Top element is ${top}`);
-      setHighlightIndex(stackItems.length - 1);
-      
-      // Reset highlight after 2 seconds
-      setTimeout(() => {
-        setHighlightIndex(null);
-      }, 2000);
+      setStackMessage(`Top of the stack: ${peeked}`);
     }
   };
 
-  const handleSearch = () => {
-    if (!searchValue.trim()) {
-      setSearchResult('Please enter a value to search');
-      return;
-    }
-    
-    const value = parseInt(searchValue);
-    if (isNaN(value)) {
-      setSearchResult('Please enter a valid number');
-      return;
-    }
-    
-    const found = stack.search(value);
-    const position = stack.searchPosition(value);
-    
-    if (found) {
-      setSearchResult(`Found ${value} at position ${position} from the top`);
-      
-      // Highlight the found element
-      const index = stackItems.length - 1 - position;
-      setHighlightIndex(index);
-      
-      // Reset highlight after 2 seconds
-      setTimeout(() => {
-        setHighlightIndex(null);
-      }, 2000);
-    } else {
-      setSearchResult(`${value} not found in the stack`);
-    }
-  };
-  
-  const handleClear = () => {
+  const handleClearStack = () => {
     stack.clear();
-    updateStackItems();
-    setMessage('Stack cleared');
+    updateVisualStack();
+    setStackMessage('Stack cleared');
   };
-  
+
+  const handleEnqueue = () => {
+    if (!queueValue.trim()) {
+      setQueueMessage('Please enter a value');
+      return;
+    }
+
+    const value = parseInt(queueValue);
+    if (isNaN(value)) {
+      setQueueMessage('Please enter a valid number');
+      return;
+    }
+
+    queue.enqueue(value);
+    updateVisualQueue();
+    setQueueValue('');
+    setQueueMessage(`Enqueued ${value} to the queue`);
+    queueInputRef.current?.focus();
+  };
+
+  const handleDequeue = () => {
+    const dequeued = queue.dequeue();
+    if (dequeued === undefined) {
+      setQueueMessage('Queue is empty');
+    } else {
+      setQueueMessage(`Dequeued ${dequeued} from the queue`);
+    }
+    updateVisualQueue();
+  };
+
+  const handlePeekQueue = () => {
+    const peeked = queue.peek();
+    if (peeked === undefined) {
+      setQueueMessage('Queue is empty');
+    } else {
+      setQueueMessage(`Front of the queue: ${peeked}`);
+    }
+  };
+
+  const handleClearQueue = () => {
+    queue.clear();
+    updateVisualQueue();
+    setQueueMessage('Queue cleared');
+  };
+
+  useEffect(() => {
+    updateVisualStack();
+    updateVisualQueue();
+  }, []);
+
   return (
     <div className="p-4">
-      <h3 className="text-xl font-bold mb-6">Stack Visualization</h3>
+      <h3 className="text-xl font-bold mb-6 text-[#260446]">{activeTab === 'stack' ? 'Stack' : 'Queue'} Visualization</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Enter a number"
-              className="w-full sm:w-48"
-              ref={inputRef}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handlePush();
-              }}
-            />
-            <Button onClick={handlePush} className="bg-green-500 text-white hover:bg-green-600">
-              Push
-            </Button>
-            <Button onClick={handlePop} className="bg-red-500 text-white hover:bg-red-600">
-              Pop
-            </Button>
-            <Button onClick={handlePeek} className="bg-blue-500 text-white hover:bg-blue-600">
-              Peek
-            </Button>
-            <Button onClick={handleClear} className="bg-gray-500 text-white hover:bg-gray-600">
-              Clear
-            </Button>
-          </div>
-          
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Input
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search for a number"
-              className="w-full sm:w-48"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSearch();
-              }}
-            />
-            <Button onClick={handleSearch} className="bg-purple-500 text-white hover:bg-purple-600">
-              Search
-            </Button>
-            {searchResult && (
-              <span className={`ml-2 text-sm ${searchResult.includes('Found') ? 'text-green-600' : 'text-red-600'}`}>
-                {searchResult}
-              </span>
+      <Card className="p-6 mb-6 bg-white/80 backdrop-blur-sm">
+        <div className="flex mb-6 space-x-2">
+          <Button
+            onClick={() => setActiveTab('stack')}
+            className={`${activeTab === 'stack' ? 'bg-[#7e61e9]' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Stack
+          </Button>
+          <Button
+            onClick={() => setActiveTab('queue')}
+            className={`${activeTab === 'queue' ? 'bg-[#7e61e9]' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Queue
+          </Button>
+        </div>
+
+        {activeTab === 'stack' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={stackValue}
+                  onChange={(e) => setStackValue(e.target.value)}
+                  placeholder="Enter a value"
+                  className="w-full"
+                  ref={stackInputRef}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handlePush();
+                  }}
+                />
+              </div>
+              <Button onClick={handlePush} className="bg-[#7e61e9] hover:bg-[#6a50c7]">
+                Push
+              </Button>
+              <Button onClick={handlePop} className="bg-red-500 hover:bg-red-600">
+                Pop
+              </Button>
+              <Button onClick={handlePeekStack} className="bg-[#260446] hover:bg-[#3b1169]">
+                Peek
+              </Button>
+              <Button onClick={handleClearStack} className="bg-gray-500 hover:bg-gray-600">
+                Clear
+              </Button>
+            </div>
+            
+            {stackMessage && (
+              <div className="mb-4 text-sm font-medium text-gray-600">
+                {stackMessage}
+              </div>
             )}
           </div>
-        
-          {message && (
-            <div className="mb-4 text-sm font-medium text-gray-600">
-              {message}
-            </div>
-          )}
-        </div>
-        
-        <div className="flex justify-center">
-          <div className="relative w-64 bg-gray-100 rounded-md p-4 shadow-inner min-h-[400px]">
-            {/* Stack label */}
-            <div className="absolute top-0 left-0 right-0 bg-gray-200 py-2 text-center text-sm font-medium rounded-t-md">
-              Stack
+        )}
+
+        {activeTab === 'queue' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={queueValue}
+                  onChange={(e) => setQueueValue(e.target.value)}
+                  placeholder="Enter a value"
+                  className="w-full"
+                  ref={queueInputRef}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleEnqueue();
+                  }}
+                />
+              </div>
+              <Button onClick={handleEnqueue} className="bg-[#7e61e9] hover:bg-[#6a50c7]">
+                Enqueue
+              </Button>
+              <Button onClick={handleDequeue} className="bg-red-500 hover:bg-red-600">
+                Dequeue
+              </Button>
+              <Button onClick={handlePeekQueue} className="bg-[#260446] hover:bg-[#3b1169]">
+                Peek
+              </Button>
+              <Button onClick={handleClearQueue} className="bg-gray-500 hover:bg-gray-600">
+                Clear
+              </Button>
             </div>
             
-            {/* Stack items */}
-            <div className="mt-10 flex flex-col-reverse">
-              <AnimatePresence>
-                {stackItems.length === 0 ? (
-                  <div className="text-gray-400 text-center py-8">Empty</div>
-                ) : (
-                  stackItems.map((item, index) => (
+            {queueMessage && (
+              <div className="mb-4 text-sm font-medium text-gray-600">
+                {queueMessage}
+              </div>
+            )}
+          </div>
+        )}
+      </Card>
+      
+      <Card className="p-6 bg-white/80 backdrop-blur-sm">
+        {activeTab === 'stack' && (
+          <div className="overflow-auto">
+            <h4 className="text-lg font-semibold text-[#260446] mb-4">Stack Contents:</h4>
+            <div className="flex flex-col-reverse items-center space-y-reverse space-y-2">
+              {stackItems.length === 0 ? (
+                <div className="text-gray-500 text-center p-4">Stack is empty</div>
+              ) : (
+                <AnimatePresence>
+                  {stackItems.map((item, index) => (
                     <motion.div
                       key={`${index}-${item}`}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ 
-                        opacity: 1, 
-                        x: 0,
-                        scale: highlightIndex === index ? 1.1 : 1,
-                        backgroundColor: highlightIndex === index ? 'rgba(99, 102, 241, 0.2)' : 'white'
-                      }}
-                      exit={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.3 }}
-                      className={`border-2 ${
-                        index === stackItems.length - 1 
-                          ? 'border-indigo-500 bg-indigo-50' 
-                          : 'border-gray-300'
-                      } rounded-md p-4 m-2 text-center font-medium ${
-                        highlightIndex === index ? 'ring-2 ring-indigo-400' : ''
-                      }`}
+                      className={`w-full max-w-md p-4 rounded-lg border-2 
+                        ${index === stackItems.length - 1 ? 'border-[#7e61e9] bg-[#7e61e9]/10' : 'border-gray-300 bg-white'}
+                        flex items-center justify-between`}
                     >
-                      <div className="text-lg">{item}</div>
+                      <span className="font-mono text-lg">{item}</span>
                       {index === stackItems.length - 1 && (
-                        <div className="text-xs text-indigo-500 font-bold mt-1">TOP</div>
+                        <span className="text-sm font-semibold text-[#7e61e9]">← Top</span>
+                      )}
+                      {index === 0 && (
+                        <span className="text-sm font-semibold text-gray-500">← Bottom</span>
                       )}
                     </motion.div>
-                  ))
-                )}
-              </AnimatePresence>
+                  ))}
+                </AnimatePresence>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'queue' && (
+          <div className="overflow-x-auto">
+            <h4 className="text-lg font-semibold text-[#260446] mb-4">Queue Contents:</h4>
+            <div className="flex flex-row items-center space-x-2 pb-4 min-h-[100px]">
+              {queueItems.length === 0 ? (
+                <div className="text-gray-500 text-center p-4 w-full">Queue is empty</div>
+              ) : (
+                <AnimatePresence>
+                  {queueItems.map((item, index) => (
+                    <motion.div
+                      key={`${index}-${item}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className={`p-4 rounded-lg border-2 
+                        ${index === 0 ? 'border-red-500 bg-red-500/10' : index === queueItems.length - 1 ? 'border-[#7e61e9] bg-[#7e61e9]/10' : 'border-gray-300 bg-white'}
+                        flex flex-col items-center justify-between min-w-[100px] h-[100px]`}
+                    >
+                      <span className="font-mono text-lg">{item}</span>
+                      {index === 0 && (
+                        <span className="text-sm font-semibold text-red-500">Front</span>
+                      )}
+                      {index === queueItems.length - 1 && (
+                        <span className="text-sm font-semibold text-[#7e61e9]">Rear</span>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
             </div>
             
-            {/* Stack bottom */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gray-200 py-2 text-center text-sm font-medium rounded-b-md">
-              Bottom
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="text-lg font-semibold text-[#260446] mb-2">Observations</h4>
+              <p className="text-gray-700">
+                {queueItems.length === 0 
+                  ? "Queue is empty. In a queue, elements are added at the rear and removed from the front (FIFO - First In, First Out)."
+                  : queueItems.length === 1
+                  ? "Queue has one element which is both the front and rear element."
+                  : `Queue has ${queueItems.length} elements. New elements are added at the rear (right) and removed from the front (left).`
+                }
+              </p>
+            </div>
+          </div>
+        )}
+        
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <h4 className="text-lg font-semibold text-[#260446] mb-2">About {activeTab === 'stack' ? 'Stacks' : 'Queues'}</h4>
+          <p className="text-gray-700">
+            {activeTab === 'stack' 
+              ? "A stack is a linear data structure that follows the Last-In-First-Out (LIFO) principle. The element added last will be the first to be removed."
+              : "A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. The element added first will be the first to be removed."
+            }
+          </p>
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h5 className="font-semibold text-[#260446] mb-2">Operations:</h5>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                {activeTab === 'stack' ? (
+                  <>
+                    <li><span className="font-semibold">Push:</span> Add an element to the top</li>
+                    <li><span className="font-semibold">Pop:</span> Remove the topmost element</li>
+                    <li><span className="font-semibold">Peek:</span> View the topmost element without removing it</li>
+                  </>
+                ) : (
+                  <>
+                    <li><span className="font-semibold">Enqueue:</span> Add an element to the rear</li>
+                    <li><span className="font-semibold">Dequeue:</span> Remove the element from the front</li>
+                    <li><span className="font-semibold">Peek:</span> View the element at the front without removing it</li>
+                  </>
+                )}
+              </ul>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h5 className="font-semibold text-[#260446] mb-2">Applications:</h5>
+              <ul className="list-disc list-inside text-gray-700 space-y-1">
+                {activeTab === 'stack' ? (
+                  <>
+                    <li>Function call management</li>
+                    <li>Expression evaluation</li>
+                    <li>Undo/Redo operations</li>
+                    <li>Browser history</li>
+                  </>
+                ) : (
+                  <>
+                    <li>Print queue management</li>
+                    <li>Task scheduling</li>
+                    <li>Breadth-first search</li>
+                    <li>Message buffers</li>
+                  </>
+                )}
+              </ul>
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

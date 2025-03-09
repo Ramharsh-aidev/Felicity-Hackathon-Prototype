@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import AlgorithmCard from "@/components/AlgorithmCard";
 import { Link } from "react-router-dom";
 
-const algorithms = [
+// These are just the few algorithms we'll show on the homepage
+const featuredAlgorithms = [
   {
     id: "data-structures/binary-search",
     title: "Binary Search",
@@ -26,15 +27,18 @@ const algorithms = [
     difficulty: "Easy" as const,
   },
   {
-    id: "data-structures/selection-sort",
-    title: "Selection Sort",
-    description: "A simple comparison-based sorting algorithm",
+    id: "algorithms/dijkstras-algorithm",
+    title: "Dijkstra's Algorithm",
+    description: "Finds shortest paths from a source node to all other nodes in a graph",
     icon: "/placeholder.svg",
-    difficulty: "Easy" as const,
+    difficulty: "Medium" as const,
   },
 ];
 
 const AlgorithmsSection = () => {
+  // Show only 4 featured algorithms on the homepage
+  const displayedAlgorithms = featuredAlgorithms;
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -43,13 +47,13 @@ const AlgorithmsSection = () => {
       className="mb-20"
     >
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#260446]">Popular Algorithms</h2>
+        <h2 className="text-3xl font-bold text-[#260446]">Featured Algorithms</h2>
         <Link to="/computer-science" className="text-[#7e61e9] font-medium text-sm hover:underline">
           View All →
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {algorithms.map((algo, index) => (
+        {displayedAlgorithms.map((algo, index) => (
           <motion.div
             key={algo.title}
             initial={{ opacity: 0, y: 20 }}

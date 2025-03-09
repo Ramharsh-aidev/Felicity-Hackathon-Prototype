@@ -1,8 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ExternalLink, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Play, Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ParticipatingInstitutes from "@/components/ParticipatingInstitutes";
+import Map from "@/components/Map";
 
 const teamImages = [
   "/img-uploads/526f3020-4148-4fbe-9419-7c751e063d27.png",
@@ -154,6 +156,54 @@ const AboutPage = () => {
               <div className="text-center">
                 <div className="text-[#260446] font-bold text-3xl">50+</div>
                 <div className="text-gray-500 text-sm">Course Modules</div>
+              </div>
+            </div>
+            
+            {/* Add the ParticipatingInstitutes component */}
+            <ParticipatingInstitutes />
+            
+            {/* Contact Us Section with Map */}
+            <div className="mt-12 pt-8 border-t border-gray-200">
+              <h2 className="text-2xl font-semibold text-[#7e61e9] mb-6">Contact Us</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-5 h-5 mt-1 text-[#7e61e9]" />
+                    <div>
+                      <p className="font-medium text-gray-700">Email</p>
+                      <a href="mailto:support@vlab.co.in" className="text-[#7e61e9] hover:underline">
+                        support@vlab.co.in
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-5 h-5 mt-1 text-[#7e61e9]" />
+                    <div>
+                      <p className="font-medium text-gray-700">Phone</p>
+                      <a href="tel:01126582050" className="text-gray-600">
+                        011-26582050
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 mt-1 text-[#7e61e9]" />
+                    <div>
+                      <p className="font-medium text-gray-700">Address</p>
+                      <address className="not-italic text-gray-600">
+                        Wireless Research Lab<br />
+                        Room No - 206/IIA<br />
+                        Bharti School of Telecom<br />
+                        Indian Institute of Technology Delhi<br />
+                        Hauz Khas, New Delhi-110016
+                      </address>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Map Component */}
+                <Map className="min-h-[300px] shadow-md" />
               </div>
             </div>
           </div>

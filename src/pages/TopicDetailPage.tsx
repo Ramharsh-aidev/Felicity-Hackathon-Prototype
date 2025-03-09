@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,6 +32,7 @@ const TopicDetailPage = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState<string>("javascript");
   
   const topic = topicId || "";
   const topicData = topicDetails[topic];
@@ -90,6 +90,51 @@ const TopicDetailPage = () => {
     }
   };
 
+  // Helper function to render implementation content based on its type
+  const renderImplementation = () => {
+    const implementation = topicData.implementation;
+    
+    if (typeof implementation === 'string') {
+      // If implementation is a string, render it directly
+      return (
+        <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+          {implementation}
+        </pre>
+      );
+    } else if (typeof implementation === 'object') {
+      // If implementation is an object with language keys
+      const languages = Object.keys(implementation);
+      
+      return (
+        <div className="space-y-4">
+          <div className="bg-gray-800 rounded-t-md overflow-hidden">
+            <div className="flex">
+              {languages.map(lang => (
+                <button
+                  key={lang}
+                  className={`px-4 py-2 text-sm focus:outline-none ${
+                    activeLanguage === lang 
+                      ? "bg-gray-700 text-white" 
+                      : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white"
+                  }`}
+                  onClick={() => setActiveLanguage(lang)}
+                >
+                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto text-sm">
+            {implementation[activeLanguage]}
+          </pre>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "aim":
@@ -136,9 +181,7 @@ const TopicDetailPage = () => {
             className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md"
           >
             <h3 className="text-xl font-semibold text-[#260446] mb-4">Implementation</h3>
-            <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-              {topicData.implementation}
-            </pre>
+            {renderImplementation()}
           </motion.div>
         );
       case "animation":

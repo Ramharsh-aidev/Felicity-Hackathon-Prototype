@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import ComputerSciencePage from "./pages/ComputerSciencePage";
 import ElectricalEngineeringPage from "./pages/ElectricalEngineeringPage";
 import MechanicalEngineeringPage from "./pages/MechanicalEngineeringPage";
 import TopicDetailPage from "./pages/TopicDetailPage";
+import MinimalChatButton from "./components/Chatbot/MinimalChatButton";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +37,8 @@ const App = () => (
             <Route path="/topic/:fieldId/:topicId" element={<TopicDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {/* Add the chatbot component */}
+          <MinimalChatButton />
         </div>
       </BrowserRouter>
     </TooltipProvider>
