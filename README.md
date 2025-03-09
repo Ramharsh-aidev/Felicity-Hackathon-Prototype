@@ -8,10 +8,9 @@ Explore Engineering concepts with interactive visualizations and animations. Des
 
 ## 🎬 Watch the Demo Video  
 
-<video width="100%" controls>
-  <source src="https://github.com/Ramharsh-aidev/Felicity-Hackathon-Prototype/ShortDemo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+![Demo Preview](https://raw.githubusercontent.com/Ramharsh-aidev/Felicity-Hackathon-Prototype/main/ShortDemo.gif)
+
+
 
 ## 🚀 Getting Started
 
